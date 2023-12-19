@@ -1,11 +1,13 @@
 package hu.webuni.university.service;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.DefaultRevisionEntity;
 import org.hibernate.envers.RevisionType;
 import org.hibernate.envers.query.AuditEntity;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -21,6 +23,8 @@ import hu.webuni.university.repository.CourseRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -41,6 +45,7 @@ public class CourseService {
 //	}
 	
 	@Transactional
+	@Cacheable("courseSearchResults")
 	public List<Course> searchCourses(Predicate predicate, Pageable pageable) {
 		
 		Page<Course> coursePage = courseRepository.findAll(predicate, pageable);
@@ -76,6 +81,29 @@ public class CourseService {
 					return historyData;
 				}).toList();
 		return resultList;
+	}
+	
+	@Transactional
+	public Course getVersionAt(Integer id, OffsetDateTime at) {
+		long epochMilli = at.toInstant().toEpochMilli();
+		
+		List resultList = AuditReaderFactory.get(em)
+				.createQuery()
+				.forRevisionsOfEntity(Course.class, true, false)
+				.add(AuditEntity.property("id").eq(id))
+				.add(AuditEntity.revisionProperty("timestamp").le(epochMilli))
+				.addOrder(AuditEntity.revisionProperty("timestamp").desc())
+				.setMaxResults(1)
+				.getResultList();
+		
+		if(!resultList.isEmpty()) {
+			Course course = (Course) resultList.get(0);
+			course.getStudents().size();
+			course.getTeachers().size();
+			return course;
+		}
+		
+		return null;
 	}
 
 
