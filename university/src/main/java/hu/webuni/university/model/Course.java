@@ -1,6 +1,9 @@
 package hu.webuni.university.model;
 
+import java.util.HashSet;
 import java.util.Set;
+
+import org.hibernate.envers.Audited;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -8,7 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.NamedAttributeNode;
 import jakarta.persistence.NamedEntityGraph;
-import org.hibernate.envers.Audited;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -48,4 +51,16 @@ public class Course {
 
 	@ManyToMany
 	private Set<Teacher> teachers;
+	
+	@OneToMany(mappedBy = "course")
+	private Set<TimeTableItem> timeTableItems;
+	
+	private Semester semester;
+	
+	public void addTimeTableItem(TimeTableItem timeTableItem) {
+		timeTableItem.setCourse(this);
+		if(this.timeTableItems == null)
+			this.timeTableItems = new HashSet<>();
+		this.timeTableItems.add(timeTableItem);
+	}
 }
