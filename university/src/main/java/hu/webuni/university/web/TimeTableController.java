@@ -27,7 +27,7 @@ public class TimeTableController implements TimeTableControllerApi {
 	private final TimeTableMapper timeTableMapper;
 
 	@Override
-	public ResponseEntity<List<TimeTableItemDto>> getApiTimetable(@Valid Integer studentId, @Valid Integer teacherId,
+	public ResponseEntity<List<TimeTableItemDto>> getTimetable(@Valid Integer studentId, @Valid Integer teacherId,
 			@Valid LocalDate from, @Valid LocalDate until) {
 
 		try {
