@@ -1,5 +1,6 @@
 package hu.webuni.university.web;
 
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -7,9 +8,12 @@ import java.util.Optional;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.data.web.SortDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.NativeWebRequest;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.querydsl.core.types.Predicate;
 
@@ -34,6 +38,8 @@ public class CourseController implements CourseControllerApi {
 	private final CourseMapper courseMapper;
 	private final NativeWebRequest request;
 	private final MethodArgumentResolverHelper resolverHelper;
+	
+	private final SimpMessagingTemplate messagingTemplate;
 
 	@Override
 	public Optional<NativeWebRequest> getRequest() {
@@ -87,5 +93,18 @@ public class CourseController implements CourseControllerApi {
 			return ResponseEntity.ok(courseMapper.courseSummariesToDtos(courses));
 		}
 	}
+
+	@Override
+	public ResponseEntity<Void> cancelLesson(Integer courseId, LocalDate day) {
+		Course course = courseRepository.findById(courseId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+		
+		messagingTemplate.convertAndSend(
+			"/topic/courseChat/" + courseId,
+			"A %s kurzus %s napin elmarad.".formatted(course.getName(), day)
+		);
+		return ResponseEntity.ok().build();
+	}
+	
+	
 	
 }
