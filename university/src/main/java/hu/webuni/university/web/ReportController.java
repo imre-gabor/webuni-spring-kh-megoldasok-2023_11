@@ -24,7 +24,7 @@ public class ReportController {
 	@Async
 	public CompletableFuture<List<CourseStat>> getSemesterReport() {
 		System.out.println("ReportController.getSemesterReport called at thread " + Thread.currentThread().getName());
-		try {			
+		try {
 			Thread.sleep(5000);
 		} catch (InterruptedException e) {
 		}
