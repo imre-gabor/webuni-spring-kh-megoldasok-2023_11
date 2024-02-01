@@ -44,7 +44,7 @@ public class StudentService {
 		}
 	}
 	
-//	@Scheduled(cron = "${university.freeSemesterUpdater.cron}")
+	@Scheduled(cron = "${university.freeSemesterUpdater.cron}")
 	public void updateFreeSemesters() {
 		List<Student> students = studentRepository.findAll();
 		
