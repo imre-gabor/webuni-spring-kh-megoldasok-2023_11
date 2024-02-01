@@ -21,6 +21,7 @@ public class JwtLoginController {
 	private final AuthenticationManager authenticationManager;
 	private final JwtService jwtService;
 	private final FacebookLoginService facebookLoginService;
+	private final GoogleLoginService googleLoginService;
 	
 	@PostMapping("/api/login")
 	public String login(@RequestBody LoginDto loginDto) {
@@ -28,10 +29,16 @@ public class JwtLoginController {
 		UserDetails userDetails = null;
 		
 		String fbToken = loginDto.getFbToken();
+		String googleToken = loginDto.getGoogleToken();
 		if(ObjectUtils.isEmpty(fbToken)) {
 		
-			userDetails = (UserDetails) authenticationManager.authenticate(
-				new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword())).getPrincipal();
+			if(ObjectUtils.isEmpty(googleToken)) {
+				Authentication authentication = authenticationManager.authenticate(
+						new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword()));
+				userDetails = (UserDetails) authentication.getPrincipal();
+			} else {
+				userDetails = googleLoginService.getUserDetailsForToken(googleToken);
+			}
 		} else {
 			userDetails = facebookLoginService.getUserDetailsForToken(fbToken);
 		}

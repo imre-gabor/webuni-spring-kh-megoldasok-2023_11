@@ -42,6 +42,7 @@ public class SecurityConfig {
 				auth
 				.requestMatchers("/api/login/**").permitAll()
 				.requestMatchers("/api/stomp/**").permitAll()
+				.requestMatchers("/services/**").permitAll()
 				.requestMatchers(HttpMethod.POST, "/api/courses/**").hasAuthority("TEACHER")
 				.requestMatchers(HttpMethod.PUT, "/api/courses/**").hasAuthority("TEACHER")
 				.anyRequest().authenticated()

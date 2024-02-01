@@ -45,6 +45,7 @@ public abstract class UniversityUser {
 	private String password;
 	
 	private String facebookId;
+	private String googleId;
 	
 	public abstract UserType getUserType();
 }

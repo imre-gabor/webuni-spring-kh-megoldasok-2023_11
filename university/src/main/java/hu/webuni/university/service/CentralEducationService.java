@@ -21,4 +21,8 @@ public class CentralEducationService {
 //			return random.nextInt(0, 10);
 //		}
 	}
+
+	public void askNumFreeSemestersForStudent(int eduId) {
+		
+	}
 }

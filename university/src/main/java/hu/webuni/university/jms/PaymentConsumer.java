@@ -13,7 +13,7 @@ public class PaymentConsumer {
 
 	private final StudentService studentService;
 	
-	@JmsListener(destination = "payments", containerFactory = "myFactory")
+	@JmsListener(destination = "payments", containerFactory = "financeFactory")
 	public void onPaymentMessage(PaymentDto paymentDto) {
 		
 		studentService.updateBalance(paymentDto.getStudentId(), paymentDto.getAmount());

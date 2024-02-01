@@ -17,7 +17,8 @@
 </form>
 
 <div *ngIf="!isLoggedIn()">
-    <button type="button" (click)="facebookSignin()" class="btn btn-primary btn-block">Login with Facebook</button>
+    <button type="button" (click)="facebookSignin()" class="btn btn-primary btn-block">Login with Facebook</button>    
+    <asl-google-signin-button type='icon' size='medium'></asl-google-signin-button>
 </div>
 
 
